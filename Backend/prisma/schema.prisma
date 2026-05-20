@@ -1,0 +1,362 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+
+model User {
+  id            String    @id
+  name          String    @db.Text
+  email         String
+  emailVerified Boolean   @default(false)
+  role          Role      @default(STUDENT)
+  image         String?   @db.Text
+
+  createdCourses Course[]
+  purchases      Purchase[]
+  payments       Payment[]
+
+  courseProgresses CourseProgress[]
+  videoProgresses  VideoProgress[]
+  chatMessages ChatMessage[]
+  savedVideos SavedVideo[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?  @db.Text
+  userAgent String?  @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String   @db.Text
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier(length: 191)])
+  @@map("verification")
+}
+
+
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  thumbnail   String?
+  price       Float    @db.Float
+  oldPrice    Float    @db.Float
+
+  rating    Float?  @db.Float
+  students  Int?    @db.Int
+  lessons   Int?    @db.Int
+  duration  Int?    @db.Int
+  category  String  @db.Text
+
+  isPublished Boolean  @default(true)
+
+  teacherId   String
+  teacher     User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  modules     Module[]
+  chatMessages ChatMessage[]
+
+  purchases   Purchase[]
+  payments    Payment[]
+
+  progresses    CourseProgress[]
+  videoProgress VideoProgress[]
+  savedVideos SavedVideo[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([teacherId])
+  @@map("courses")
+}
+
+model Module {
+  id         String   @id @default(cuid())
+  title      String
+  position   Int
+
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  videos     Video[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // no duplicate module order in same course
+  @@unique([courseId, position])
+
+  @@index([courseId])
+  @@map("modules")
+}
+
+enum DocumentStatus {
+  pending
+  ready
+  failed
+}
+
+model Video {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+
+  videoPath   String?
+  videoUrl    String
+  notesUrl    String? 
+
+  aiProcessingStatus DocumentStatus   @default(pending)
+
+  duration    Int?     // seconds
+  position    Int
+
+  isPreview   Boolean  @default(false) 
+
+
+  moduleId    String
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  videoProgress VideoProgress[]
+  chatMessages ChatMessage[]
+  savedVideos SavedVideo[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // no duplicate video order in same module
+   @@unique([moduleId, position])
+
+  @@index([moduleId])
+  @@map("videos")
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+
+  paid        Boolean  @default(true)
+
+  userId      String
+  courseId    String
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  purchasedAt DateTime @default(now())
+
+  // one user can buy one course only once
+  @@unique([userId, courseId])
+  @@index([userId]) 
+  @@index([courseId])
+  @@map("purchases")
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  courseId    String?
+  course      Course? @relation(fields: [courseId], references: [id])
+
+  videoId     String
+  video       Video @relation(fields: [videoId], references: [id])
+
+  content     Json
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@index([videoId])
+}
+
+model SavedVideo {
+  id       String @id @default(cuid())
+
+  userId   String
+  videoId  String
+  courseId String
+
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video    Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  savedAt  DateTime @default(now())
+
+  // user can save a video only once
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@map("saved_videos")
+}
+
+
+enum PaymentProvider {
+  RAZORPAY
+  STRIPE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+   id                String           @id @default(cuid())
+
+  // payment business data
+  amount            Float            @db.Float
+  currency          String           @default("INR")
+
+  // provider
+  provider          PaymentProvider
+
+  receipt           String?          @unique
+
+  // provider references
+  orderId           String           @unique
+  paymentId         String?          @unique
+  transactionId     String?          @unique
+
+  // webhook safety
+  webhookEventId    String?          @unique
+  event             String?
+
+  // status
+  status            PaymentStatus    @default(PENDING)
+
+  // failure tracking
+  failureReason     String?
+
+  // relations
+  userId            String
+  courseId          String
+
+  user              User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course            Course           @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  // timestamps
+  paidAt            DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@index([userId])
+  @@index([courseId])
+  @@index([status])
+
+  @@map("payments")
+}
+
+model CourseProgress {
+  id              String   @id @default(cuid())
+
+  userId          String
+  courseId        String
+
+  completedVideos Int      @default(0)
+  totalVideos     Int
+
+  progressPercent Float    @default(0)
+
+  lastVideoId     String?
+
+  startedAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  completedAt     DateTime?
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+
+  @@map("course_progress")
+}
+
+model VideoProgress {
+  id            String   @id @default(cuid())
+
+  userId        String
+  courseId      String
+  videoId       String
+
+  isCompleted   Boolean  @default(false)
+
+  watchedSeconds Int     @default(0)
+
+  lastPosition   Int     @default(0)
+
+  completedAt    DateTime?
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  video          Video    @relation(fields: [videoId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([videoId])
+
+  @@map("video_progress")
+}
