@@ -15,14 +15,18 @@ import payment from './routes/payment.js';
 import './worker/PdfWorker.js'; // Start BullMQ PDF worker
 
 const corsOptions = {
-    origin: process.env.FRONTEND_URL,    // Frontend URL
+    origin: [
+      process.env.FRONTEND_URL as string,
+      process.env.FRONTEND_URL_WWW as string,
+      "http://localhost:3001"
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'cookie'],
     credentials: true,
 };
- 
+  
 
 const app = express();
+
 app.use(cors(corsOptions));
 app.all("/api/auth/{*path}", toNodeHandler(auth));
 
