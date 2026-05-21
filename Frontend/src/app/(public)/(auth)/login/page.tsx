@@ -59,8 +59,6 @@ export default function LoginPage() {
                        
 
             router.push("/home");
-
-
         } catch (error) {
             console.error(error);
         } finally {

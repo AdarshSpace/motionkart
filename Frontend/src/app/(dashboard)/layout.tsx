@@ -10,7 +10,10 @@ import { Sidebar } from "../../components/Layouts/Side-bar";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   
   const cookieStore = await cookies();
-  const token = cookieStore.get("better-auth.session_token");
+  const token =
+    cookieStore.get("__Secure-better-auth.session_token") ||
+    cookieStore.get("better-auth.session_token");
+
   if(!token) {
     redirect("/login");
   }
