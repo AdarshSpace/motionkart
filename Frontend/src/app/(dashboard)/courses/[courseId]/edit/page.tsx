@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {UploadCard} from "@/components/Section/uploadCard";
+import {UploadCard} from "@/components/Create_Course/uploadCard";
 import { useParams } from "next/navigation";
 import { randomUUID } from "crypto";
 import { div } from "motion/react-client";
