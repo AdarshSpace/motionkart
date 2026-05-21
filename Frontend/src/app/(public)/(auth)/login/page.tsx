@@ -56,7 +56,6 @@ export default function LoginPage() {
                 setError("root", { type: "server",  message: response.error.message || "Invalid email or password" });
                 return;
             }
-             setError("root", { type: "server",  message: response.error.message || "Invalid email or password" });
                        
 
             router.push("/home");
@@ -84,7 +83,6 @@ export default function LoginPage() {
             provider: "github",
             callbackURL:  `${process.env.NEXT_PUBLIC_FRONTEND_URL}/courses`,
           });
-          console.log('Github Res : ',response);
         } catch (error) {
           console.log(error);
         }

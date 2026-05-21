@@ -69,10 +69,9 @@ export default function SignupPage() {
             name: name,
             email: email,
             password: password,
-          },{credentials:"include"}
+          }
         );
                 
-          console.log(response);
         if (!response.data) {
             setError("root", { type: "server",  message: response.error.message || "Invalid email or password" });
             return;
