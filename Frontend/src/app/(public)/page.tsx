@@ -1,13 +1,13 @@
+import LandingPage from "@/components/LandingPage/LandingPage";
+import { cookies } from "next/headers";
 
+export default async function Page() {
 
-
-
-export default function HomePage() {
-  return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <h1>Landing Page</h1>
-      </div>
-    </>
-  );
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get("__Secure-better-auth.session_token") ||
+    cookieStore.get("better-auth.session_token");
+  const authenticated = token? true : false;
+  
+  return <LandingPage authenticated={authenticated} />
 }

@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
-import { getCourse, getChatHistory, sendChat } from '@/serverAction/learn';
+import {getCourse, getChatHistory, sendChat} from '@/serverAction/learn';
 
 import {
   Play, CheckCircle, Download, FileText, MessageSquare,
@@ -140,7 +140,7 @@ export default function CoursePlayerPage() {
   // ── Fetch course & auto-select video from URL query param ──
   async function fetchCourse(courseId: string) {
     try {
-      const { data } = await getCourse(courseId);
+      const {data} = await getCourse(courseId);
 
       setCourseData(data);
     } catch (error) {
@@ -156,17 +156,17 @@ export default function CoursePlayerPage() {
     if (courseData?.modules?.length > 0) {
       const videoIdFromUrl = searchParams.get("videoId");
       let targetVideo = null;
-
+      
       if (videoIdFromUrl) {
         for (const module of courseData.modules) {
           const found = module.videos?.find((v: any) => v.id === videoIdFromUrl);
-          if (found) {
-            targetVideo = found;
-            break;
+          if (found) { 
+            targetVideo = found; 
+            break; 
           }
         }
       }
-
+      
       if (targetVideo) {
         if (targetVideo.id !== activeLesson?.id) {
           setActiveLesson(targetVideo);
@@ -298,10 +298,11 @@ export default function CoursePlayerPage() {
                 disabled={saveLoading}
                 variant="outline"
                 size="lg"
-                className={`gap-2 border-slate-200 h-11 px-5 font-bold transition-all rounded-xl ${isSaved
-                  ? "bg-blue-50 border-[#0039a6]/30 text-[#0039a6] hover:bg-blue-100"
-                  : "text-slate-700 hover:bg-slate-50"
-                  }`}
+                className={`gap-2 border-slate-200 h-11 px-5 font-bold transition-all rounded-xl ${
+                  isSaved
+                    ? "bg-blue-50 border-[#0039a6]/30 text-[#0039a6] hover:bg-blue-100"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
               >
                 {saveLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -358,9 +359,31 @@ export default function CoursePlayerPage() {
             <div className="w-full relative z-10">
 
               {/* Description Tab */}
+              {/* <TabsContent value="description" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-700 outline-none">
+                <div className="space-y-10">
+                  <div className="prose prose-slate max-w-none">
+                    <p className="text-slate-600 leading-relaxed text-lg font-medium">
+                      {activeLesson?.description || "No description available for this lesson."}
+                    </p>
+                  </div>
+                  {activeLesson?.topics && activeLesson.topics.length > 0 && (
+                    <div className="p-10 bg-slate-50/50 border border-slate-100 rounded-[2.5rem] max-w-md shadow-sm">
+                      <h4 className="font-extrabold text-slate-900 text-xl mb-6">Key Topics</h4>
+                      <ul className="space-y-4">
+                        {activeLesson.topics.map((topic: string, i: number) => (
+                          <li key={i} className="flex items-center gap-4 text-slate-600 font-bold group cursor-default">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 group-hover:scale-150 transition-all duration-300 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+                            {topic}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </TabsContent> */}
               <TabsContent value="description" className="mt-0 animate-in fade-in slide-in-from-bottom-4 duration-700 outline-none">
                 <div className="flex flex-col bg-slate-50 border border-gray-300 rounded-2xl overflow-hidden p-8 space-y-8">
-
+                  
                   {/* Description */}
                   <div>
                     <h4 className="font-semibold text-slate-900 text-base mb-3">About this Lesson</h4>
@@ -405,7 +428,7 @@ export default function CoursePlayerPage() {
                         </div>
                       </div>
 
-                      <a
+                      <a 
                         href={activeLesson.notesUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -473,10 +496,11 @@ export default function CoursePlayerPage() {
                         )}
                         <div className={`max-w-[75%] flex flex-col gap-1.5 ${msg.role === 'USER' ? 'items-end' : 'items-start'}`}>
                           <div
-                            className={`px-4 py-3 text-sm leading-relaxed font-medium ${msg.role === 'USER'
-                              ? 'bg-[#0039a6] text-white rounded-2xl rounded-br-sm'
-                              : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-bl-sm '
-                              }`}
+                            className={`px-4 py-3 text-sm leading-relaxed font-medium ${
+                              msg.role === 'USER'
+                                ? 'bg-[#0039a6] text-white rounded-2xl rounded-br-sm'
+                                : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-bl-sm '
+                            }`}
                           >
                             {msg.role === 'USER' ? (
                               msg.text
@@ -641,19 +665,22 @@ export default function CoursePlayerPage() {
                           router.replace(`?videoId=${video.id}`, { scroll: false });
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
-                        className={`flex items-start gap-3 px-5 py-3 cursor-pointer transition-colors border-b border-slate-100 last:border-none ${activeLesson?.id === video.id ? "bg-blue-50/40" : "hover:bg-slate-50"
-                          }`}
+                        className={`flex items-start gap-3 px-5 py-3 cursor-pointer transition-colors border-b border-slate-100 last:border-none ${
+                          activeLesson?.id === video.id ? "bg-blue-50/40" : "hover:bg-slate-50"
+                        }`}
                       >
                         <div className="flex-shrink-0 mt-0.5">
                           <div
-                            className={`w-4 h-4 rounded-full border-2 ${activeLesson?.id === video.id ? "border-blue-600" : "border-slate-300"
-                              }`}
+                            className={`w-4 h-4 rounded-full border-2 ${
+                              activeLesson?.id === video.id ? "border-blue-600" : "border-slate-300"
+                            }`}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p
-                            className={`text-sm font-medium leading-snug mb-1 ${activeLesson?.id === video.id ? "text-blue-700" : "text-slate-700"
-                              }`}
+                            className={`text-sm font-medium leading-snug mb-1 ${
+                              activeLesson?.id === video.id ? "text-blue-700" : "text-slate-700"
+                            }`}
                           >
                             {video.title}
                           </p>

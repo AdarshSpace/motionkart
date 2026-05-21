@@ -6,6 +6,8 @@ export async function Header() {
   const userData = await fetchUser();
 
 
+
+
   return (
     <header className="h-20 bg-white border-b border-slate-300 flex items-center justify-between px-8 sticky top-0 z-30">
       <div className="flex items-center gap-4">

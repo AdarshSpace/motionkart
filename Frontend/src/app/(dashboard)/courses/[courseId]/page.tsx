@@ -1,65 +1,22 @@
-"use client";
 
-import { useEffect, useState } from "react";
-import { startPayment } from "@/lib/payment";
-import { useParams, useRouter } from "next/navigation";
 import { getCourse } from "@/serverAction/learn";
 
-import { ArrowLeft, Play, CheckCircle2, Users, Star, Globe, ShieldCheck, HelpCircle, Video, FileText, MessageCircle } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle2, Users, Star, Globe, ShieldCheck, HelpCircle, Video, FileText, MessageCircle, Lock } from "lucide-react";
+import Link from 'next/link';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import BuyButton from "@/components/BuyButton/BuyButton";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-export default function CourseDetailPage() {
-  const { courseId } = useParams();
-  const router = useRouter();
+export default async function CourseDetailPage({ params }: { params: Promise<{ courseId: string }>}) {
 
-  const [details, setDetails] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { courseId } = await params;
 
-  useEffect(() => {
-    if (courseId) {
-      fetchCourseDetails();
-    }
-  }, [courseId]);
-
-  const fetchCourseDetails = async () => {
-    try {
-      const {data} = await getCourse(courseId as string);
-
-      console.log("Course Details:", data);
-
-      setDetails(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBuyNow = async () => {
-    try {
-      console.log("This is course id ", courseId);
-
-      const res = await startPayment(courseId as string);
-
-      console.log(res);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500 text-lg font-semibold">
-        Loading course...
-      </div>
-    );
-  }
+  const { data: details } = await getCourse(courseId);
 
   if (!details) {
     return (
@@ -69,8 +26,7 @@ export default function CourseDetailPage() {
     );
   }
 
-  const totalLessons =
-    details.modules?.reduce(
+  const totalLessons = details.modules?.reduce(
       (acc: number, module: any) =>
         acc + (module.videos?.length || 0),
       0
@@ -78,15 +34,14 @@ export default function CourseDetailPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-10 py-6 px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Navigation */}
-      <Button
-        variant="ghost"
-        onClick={() => router.push("/courses")}
-        className="group text-slate-500 hover:text-[#0039a6] pl-0 font-bold"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-        BACK TO ALL COURSES
-      </Button>
+        {/* Navigation */}
+        <Link
+          href="/courses"
+          className="inline-flex items-center text-slate-500 hover:text-[#0039a6] font-bold transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+          BACK TO ALL COURSES
+        </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* LEFT SIDE */}
@@ -262,7 +217,7 @@ export default function CourseDetailPage() {
                               </div>
 
                               <span className="text-xs text-slate-400 font-mono tracking-tighter">
-                                Preview
+                                <Lock className="w-3.5 h-3.5 text-slate-400 group-hover/item:text-[#0039a6]" />
                               </span>
                             </div>
                           )
@@ -360,12 +315,8 @@ export default function CourseDetailPage() {
                 </div>
 
                 <div className="space-y-4">
-                  <Button
-                    onClick={handleBuyNow}
-                    className="w-full bg-[#0039a6] hover:bg-[#002d85] h-12 text-base font-bold rounded-xl"
-                  >
-                    Enroll Now
-                  </Button>
+                   
+                <BuyButton courseId={courseId} />
 
                   <p className="text-center text-xs text-slate-400 font-medium">
                     30-day money-back guarantee

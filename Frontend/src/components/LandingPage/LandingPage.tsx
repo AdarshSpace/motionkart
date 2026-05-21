@@ -9,6 +9,8 @@ import {
   Menu, X, PlayCircle, Lock, LogOut, Layers,
   User,
   GraduationCap,
+  ArrowUpRightFromSquare,
+  ArrowBigRight,
 } from "lucide-react";
 
 //  Brand tokens
@@ -86,7 +88,7 @@ const HeroDashboard = () => (
 
           {/* Brand name */}
           <div className="text-left">
-            <div className="text-[19px] font-bold text-[#0039A6]">motioncraft</div>
+            <div className="text-[19px] font-bold text-[#0039A6]">motionkart</div>
           </div>
 
           {/* User Info */}
@@ -128,14 +130,7 @@ const HeroDashboard = () => (
                 <rect x="40" y="40" width="340" height="28" rx="10" fill="#1c2128"/>
                 <rect x="40" y="56" width="340" height="12" fill="#1c2128"/>
                 <circle cx="58" cy="54" r="4" fill="#ff5f57"/><circle cx="72" cy="54" r="4" fill="#febc2e"/><circle cx="86" cy="54" r="4" fill="#28c840"/>
-                {/* <g fontFamily="monospace" fontSize="11">
-                  <text x="60" y="90" fill="#6e7681">1</text><text x="76" y="90" fill="#ff7b72">import</text><text x="118" y="90" fill="#e6edf3"> React </text><text x="152" y="90" fill="#ff7b72">from</text><text x="178" y="90" fill="#a5d6ff"> 'react'</text>
-                  <text x="60" y="108" fill="#6e7681">2</text><text x="76" y="108" fill="#ff7b72">export default function</text><text x="240" y="108" fill="#d2a8ff"> Course</text><text x="280" y="108" fill="#e6edf3">{"() {"}</text>
-                  <text x="60" y="126" fill="#6e7681">3</text><text x="94" y="126" fill="#ff7b72">const</text><text x="124" y="126" fill="#e6edf3"> [progress] =</text><text x="200" y="126" fill="#79c0ff"> useState</text><text x="252" y="126" fill="#e6edf3">(25)</text>
-                  <text x="60" y="144" fill="#6e7681">4</text><text x="94" y="144" fill="#ff7b72">return</text><text x="132" y="144" fill="#e6edf3"> (</text>
-                  <text x="60" y="162" fill="#6e7681">5</text><text x="112" y="162" fill="#7ee787">{"<div"}</text><text x="140" y="162" fill="#e6edf3"> className=</text><text x="210" y="162" fill="#a5d6ff">"course"</text><text x="258" y="162" fill="#7ee787">{">"}</text>
-                  <rect x="270" y="150" width="7" height="14" fill="#0039a6" opacity="0.9"><animate attributeName="opacity" values="0.9;0;0.9" dur="1.2s" repeatCount="indefinite"/></rect>
-                </g> */}
+
                 {/* Blender Viewport Background */}
                 <rect x="40" y="68" width="340" height="172" fill="#232323" />
                 
@@ -273,7 +268,7 @@ const FeatureScreenshot = ({ accent, children }: { accent: string; children: Rea
       <div className="w-3 h-3 rounded-full bg-[#febc2e]"/>
       <div className="w-3 h-3 rounded-full bg-[#28c840]"/>
       <div className="ml-3 flex-1 h-6 rounded-md bg-slate-200 max-w-[200px] flex items-center px-2">
-        <span className="text-[10px] text-slate-400">motioncraft.app</span>
+        <span className="text-[10px] text-slate-400">motionkart.online</span>
       </div>
     </div>
     <div className="p-6">{children}</div>
@@ -325,7 +320,7 @@ const DoubtChatMock = () => (
       ].map((m, i) => (
         <div key={i} className={`flex gap-2 ${m.me ? "flex-row-reverse" : ""}`}>
           <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white ${m.me ? "bg-[#0039a6]" : "bg-slate-300 text-slate-600"}`}>
-            {m.me ? "I" : "R"}
+            {m.me ? "AI" : "Y"}
           </div>
           <div className={`rounded-2xl px-3 py-2 text-xs max-w-[78%] ${m.me ? "bg-[#0039a6] text-white rounded-tr-sm" : "bg-slate-100 text-slate-700 rounded-tl-sm"}`}>
             {m.msg}
@@ -378,7 +373,7 @@ const Testimonial = ({ quote, name, role, metric, bg }: any) => (
 );
 
 //  Main page
-export default function LandingPage() {
+export default function LandingPage({authenticated}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -401,21 +396,32 @@ export default function LandingPage() {
               <GraduationCap className="w-5 h-5 text-white font-bold"/>
             </div>
             <span className={`font-black text-xl tracking-tight ${scrolled ? "text-slate-800" : "text-white"}`}>
-              motioncraft
+              motionkart
             </span>
           </Link>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login">
-              <Button variant="ghost" className={`font-bold cursor-pointer text-sm ${scrolled ? "text-slate-700" : "text-white hover:bg-white/10"}`}>
-                Login
-              </Button>
+            { authenticated ? 
+            <Link href="/home">
+                <Button style={{ background: TEAL }} className="text-white font-semibold rounded-full px-6 py-5 cursor-pointer hover:opacity-90 shadow-lg">
+                Go to Dashboard
+                </Button>
             </Link>
-            <Link href="/signup">
-              <Button style={{ background: TEAL }} className="text-white font-bold rounded-full px-6 hover:opacity-90 shadow-lg">
-                Sign up free
-              </Button>
-            </Link>
+            :
+            <>
+                <Link href="/login">
+                <Button variant="ghost" className={`font-bold cursor-pointer text-sm ${scrolled ? "text-slate-700" : "text-white hover:bg-white/10"}`}>
+                    Login
+                </Button>
+                </Link>
+                <Link href="/signup">
+                <Button style={{ background: TEAL }} className="text-white font-bold rounded-full px-6 hover:opacity-90 shadow-lg">
+                    Sign up free
+                </Button>
+                </Link>
+            </>
+            }
+
           </div>
 
           <button onClick={() => setMenuOpen(!menuOpen)} className={`md:hidden ${scrolled ? "text-slate-700" : "text-white"}`}>
@@ -563,10 +569,10 @@ export default function LandingPage() {
               <span style={{ color: ORANGE }}>anytime.</span>
             </h2>
             <p className="text-slate-500 text-lg leading-relaxed">
-              Stuck on a keyframe? Confused about nodes? Our instructor team responds within hours — around the clock, every day.
+              Stuck on a keyframe? Confused about nodes? Our AI Doubt assistant responds instantly — around the clock, every day.
             </p>
             <ul className="flex flex-col gap-3 mt-1">
-              {["Post text, screenshots, or project files","Instructor replies within 24 hrs","Community of 5,000+ fellow artists","Searchable Q&A archive"].map(item => (
+              {["Ask doubts anytime","AI Assistant will respond shortly","Community of 5,000+ fellow artists","Powered by RAG"].map(item => (
                 <CheckItem key={item} color={ORANGE}>{item}</CheckItem>
               ))}
             </ul>

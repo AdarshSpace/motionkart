@@ -1,15 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export const fetchUser = async () => {
     try{
         const cookieStore = await cookies();
-        const token = cookieStore.get("better-auth.session_token");
-        if(!token) {
-          redirect("/login");
-        }
     
         // fetch user details
         const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/me`, {
@@ -20,6 +15,7 @@ export const fetchUser = async () => {
         });
 
         const {details} = await res.json();
+        console.log('Details from server action : ',details);
     
         if (!details) throw new Error("Failed to fetch user");
         

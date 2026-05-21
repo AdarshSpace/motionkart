@@ -71,8 +71,8 @@ export function SplashScreen() {
               transition={{ delay: 1.2, duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
               className="absolute top-full mt-5 whitespace-nowrap"
             >
-                <h1 className="text-3xl font-bold tracking-tight text-[#0039a6] font-sans">
-                  TalentLMS
+                <h1 className="text-3xl font-bold tracking-tight text-[#0039a6] font-sans ">
+                  MotionKart
                 </h1>
             </motion.div>
           </motion.div>
