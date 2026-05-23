@@ -17,32 +17,26 @@ export function HeroSection() {
   const router = useRouter();
   return (
     <Card className="bg-[#0039a6] text-white overflow-hidden border-none shadow-xl mb-6 relative">
-      <CardContent className="p-0 flex h-72">
-        <div className="flex-1 p-10 flex flex-col justify-center">
+      <CardContent className="p-0 flex flex-col md:flex-row min-h-[18rem] overflow-hidden">
+        <div className="flex-1 p-6 md:p-10 flex flex-col justify-center relative z-10">
           <p className="text-blue-200 text-sm font-medium mb-2">Motion Design</p>
-          <h1 className="text-4xl font-bold mb-4">Magic of Animation!</h1>
-          <p className="text-blue-100 max-w-md opacity-80">
-            {/* This Blender course covers 3D modeling, lighting, materials, animation, sculpting, and rendering workflows used in games, films, and product visualization.  */}
-
-Start with the basics. Build real projects. Get feedback from pros. Join a community that actually helps.          </p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">Magic of Animation!</h1>
+          <p className="text-blue-100 max-w-md opacity-80 text-sm md:text-base">
+            Start with the basics. Build real projects. Get feedback from pros. Join a community that actually helps.
+          </p>
         </div>
         
-        <div className="w-[450px] relative">
+        <div className="w-full md:w-[450px] relative h-64 md:h-auto hidden md:block">
           {/* Abstract circles decoration */}
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-white rounded-full" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-white rounded-full" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] border border-white rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] border border-white rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] md:w-[400px] h-[200px] md:h-[400px] border border-white rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100px] md:w-[300px] h-[100px] md:h-[300px] border border-white rounded-full" />
           </div>
 
-          <div className="absolute inset-0 flex items-center justify-center p-8">
-            <Card className="bg-white/10 backdrop-blur-md border-white/20 overflow-hidden w-full max-w-sm shadow-2xl">
+          <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <Card className="bg-white/10 backdrop-blur-md border-white/20 overflow-hidden w-full max-w-sm shadow-2xl relative z-20">
               <div className="aspect-video relative group">
-                {/* <img 
-                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80" 
-                  alt="Compliance" 
-                  className="w-full h-full object-cover"
-                /> */}
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                    <Link href="/courses/1" className="w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
                      <Play className="text-[#0039a6] fill-current w-6 h-6 ml-1" />

@@ -37,7 +37,7 @@ export function Sidebar() {
 }
 
   return (
-    <div className="w-20 bg-[#0039a6] h-screen fixed left-0 top-0 flex flex-col items-center pt-4 pb-6 text-white z-50">
+    <div className="hidden md:flex w-20 bg-[#0039a6] h-screen fixed left-0 top-0 flex-col items-center pt-4 pb-6 text-white z-50">
 
         {/* Logo 1 */}
       <div className="mb-12">

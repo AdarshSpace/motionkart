@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { fetchUser } from "@/serverAction/userDetails";
+import { MobileSidebar } from "./Mobile-sidebar";
 
 export async function Header() {
 
@@ -9,9 +10,9 @@ export async function Header() {
 
 
   return (
-    <header className="h-20 bg-white border-b border-slate-300 flex items-center justify-between px-8 sticky top-0 z-30">
+    <header className="h-20 bg-white border-b border-slate-300 flex items-center justify-between px-4 md:px-8 sticky top-0 z-30">
       <div className="flex items-center gap-4">
-        {/* Placeholder if needed */}
+        <MobileSidebar />
       </div>
       <div className="flex items-center gap-3 group">
         <div className="text-right hidden sm:block">

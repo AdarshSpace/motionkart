@@ -97,7 +97,7 @@ export default async function NotesPage() {
                 </div>
 
                 {/* Notes Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
                   {course.notes.map((note) => (
 
