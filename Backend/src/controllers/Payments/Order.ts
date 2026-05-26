@@ -12,7 +12,9 @@ const razorpay = new Razorpay({
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
+    console.log("Body :", req.body)
     const { courseId } = req.body;
+   
     const userId = req.user?.id as string
     const  RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID
 

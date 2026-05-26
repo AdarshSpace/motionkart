@@ -52,32 +52,6 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
 
       setIsSubmittingVideo(true);
 
-      // Ask backend for ImageKit auth
-        const authRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/auth`,{
-          credentials: "include",
-        });
-        const data = await authRes.json();
- 
-        const res = await upload({
-          file: videoFile,
-          fileName: videoFile.name,
-          publicKey: data.publicKey,
-          expire: data.expire,
-          token: data.token,
-          signature: data.signature,
-          onProgress: (event: ProgressEvent) => {
-            if (event.lengthComputable) {
-              const percent = Math.round(
-                (event.loaded / event.total) * 100
-              );
-            //   onProgress(percent);
-            }
-          },
-        });
-
-        console.log('Uploaded video : ', res);
-
-
       let uploadedNotesUrl = '';
 
       if (notesFile) {
@@ -102,6 +76,39 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
 
      uploadedNotesUrl = uploadedPdf.url;
       }
+
+      let data;
+
+      if(videoFile){
+
+    
+              // STEP 1 → Get upload URL from backend
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/video/create`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+    console.log(response)
+
+      data = await response.json();
+
+      console.log("Mux Data : ",data)
+
+    if (!data.success) {
+      throw new Error("Failed to create upload URL");
+    }
+
+    // STEP 2 → Upload directly to Mux
+   const res = await fetch(data.uploadUrl, {
+      method: "PUT",
+      body: videoFile,
+    });
+
+    console.log("res : ", res);
+
+      }
   
       const matchedSection = sections.find( (s) => s.sid === section.sid );
 
@@ -118,9 +125,7 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
           {
             title: formData.title,
             description: formData.description,
-            videoUrl: res.url,
-            videoPath: res.filePath,
-            videoDuration: res.duration,
+            uploadId : data.uploadId,
             notesUrl: uploadedNotesUrl || null,
           },
         ],
@@ -144,7 +149,7 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
       const newVideo = {
         title: formData.title,
         description: formData.description,
-        videoUrl: result.url,
+        videoUrl: result.url || null,
         notesUrl: uploadedNotesUrl,
       };
 
@@ -169,37 +174,37 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
 
         {/* Header */}
 
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
-              <Upload className="w-4 h-4 text-[#0039a6]" />
+        <div className="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
+              <Upload className="w-5 h-5 text-[#0039a6]" />
             </div>
 
-            <h2 className="text-base font-extrabold text-slate-800 tracking-tight"> Add Video </h2>
+            <h2 className="text-xl font-bold text-slate-800 tracking-tight"> Add Lesson </h2>
           </div>
 
           <button
             onClick={closeUploadModal}
             className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Body */}
 
-        <div className="p-6 space-y-4">
+        <div className="p-8 space-y-6">
 
           {/* Title */}
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
 
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Video Title <span className="text-red-400">*</span>
+            <label className="text-sm font-semibold text-slate-700">
+              Video Title <span className="text-red-500">*</span>
             </label>
 
             <Input
@@ -211,15 +216,15 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
                   title: e.target.value,
                 }))
               }
-              className="h-10 text-sm border-slate-200 focus-visible:ring-1 focus-visible:ring-[#0039a6] focus-visible:border-[#0039a6] rounded-xl"
+              className="h-12 text-sm border-slate-200 focus-visible:ring-1 focus-visible:ring-[#0039a6] focus-visible:border-[#0039a6] rounded-xl"
             />
           </div>
 
           {/* Description */}
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
 
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <label className="text-sm font-semibold text-slate-700">
               Description
             </label>
 
@@ -227,25 +232,26 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
               placeholder="What will students learn in this video?"
               value={formData.description}
               onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-              className="w-full min-h-[72px] rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0039a6] focus:border-[#0039a6] resize-none transition-all"
+              className="w-full min-h-[100px] rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#0039a6] focus:border-[#0039a6] resize-none transition-all"
             />
           </div>
 
           {/* Video Upload */}
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
 
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Video File <span className="text-red-400">*</span>
+            <label className="text-sm font-semibold text-slate-700">
+              Video File <span className="text-red-500">*</span>
             </label>
 
-            <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 focus-within:ring-1 focus-within:ring-[#0039a6] focus-within:border-[#0039a6] transition-all">
+            <div className="flex items-center gap-3 border border-slate-200 rounded-xl px-4 focus-within:ring-1 focus-within:ring-[#0039a6] focus-within:border-[#0039a6] transition-all h-12">
 
-              <Video className="w-4 h-4 text-slate-400 shrink-0" />
+              <Video className="w-5 h-5 text-slate-400 shrink-0" />
 
               <input
                 type="file"
-                className="flex-1 h-10 text-sm outline-none bg-transparent"
+                accept="video/*"
+                className="flex-1 text-sm outline-none bg-transparent file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-[#0039a6] hover:file:bg-blue-100 cursor-pointer"
                 onChange={(e) => { const file = e.target.files?.[0];
                      if (file) { setVideoFile(file) }
                 }}               
@@ -259,22 +265,23 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
 
           {/* Notes Upload */}
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
 
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <label className="text-sm font-semibold text-slate-700">
               Notes / PDF File
             </label>
 
-            <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 focus-within:ring-1 focus-within:ring-[#0039a6] focus-within:border-[#0039a6] transition-all">
+            <div className="flex items-center gap-3 border border-slate-200 rounded-xl px-4 focus-within:ring-1 focus-within:ring-[#0039a6] focus-within:border-[#0039a6] transition-all h-12">
 
-              <FileText className="w-4 h-4 text-slate-400 shrink-0" />
+              <FileText className="w-5 h-5 text-slate-400 shrink-0" />
 
               <input
                 type="file"
+                accept=".pdf,.doc,.docx"
                 onChange={(e) => { const file = e.target.files?.[0];
                   if (file) { setNotesFile(file) }
                 }}
-                className="flex-1 h-10 text-sm outline-none bg-transparent"
+                className="flex-1 text-sm outline-none bg-transparent file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-600 hover:file:bg-slate-200 cursor-pointer"
               />
           </div>
 
@@ -288,32 +295,30 @@ export const UploadCard = ({ closeUploadModal, addVideo, section, sections, cour
 
         {/* Footer */}
 
-        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3">
+        <div className="px-8 py-5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-4">
 
           <Button
             variant="outline"
-            size="sm"
             onClick={closeUploadModal}
-            className="font-bold border-slate-200 text-slate-600 hover:bg-white rounded-xl h-9 px-4"
+            className="font-semibold border-slate-200 text-slate-600 hover:bg-white rounded-xl h-11 px-6"
           >
             Cancel
           </Button>
 
           <Button
-            size="sm"
             onClick={handleSubmit}
             disabled={isSubmittingVideo}
-            className="gap-2 bg-[#0039a6] hover:bg-[#002d85] text-white font-bold rounded-xl h-9 px-5 shadow-md shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-60 disabled:scale-100"
+            className="gap-2 bg-[#0039a6] hover:bg-[#002d85] text-white font-semibold rounded-xl h-11 px-6 shadow-sm transition-all disabled:opacity-60 disabled:scale-100"
           >
             {isSubmittingVideo ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Upload className="w-3.5 h-3.5" />
+              <Upload className="w-4 h-4" />
             )}
 
             {isSubmittingVideo
-              ? "Saving..."
-              : "Save Video"}
+              ? "Uploading..."
+              : "Upload Lesson"}
           </Button>
         </div>
       </div>

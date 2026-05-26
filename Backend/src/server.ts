@@ -30,6 +30,8 @@ const app = express();
 app.use(cors(corsOptions));
 app.all("/api/auth/{*path}", toNodeHandler(auth));
 
+app.use('/api/payment', payment);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -39,7 +41,6 @@ app.use("/api/video", videoRoutes);
 app.use("/api/saveVideo", saveVideoRoutes);
 app.use("/api/chat", chatRoutes);
 
-app.use('/api/payment', payment);
 app.use('/api/user', userRoutes);
 
 

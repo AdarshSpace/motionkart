@@ -3,10 +3,16 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { PineconeStore } from "@langchain/pinecone";
 
+
+export interface ChatMessage {
+  role: "student" | "assistant";
+  content: string;
+}
+
 interface RetrieveInput {
   courseId: string;
 
-  question: string;
+  reQuestion: string;
 
   moduleId?: string;
   videoId?: string;
@@ -31,9 +37,12 @@ interface RetrieveResponse {
 }
 
 
+
+// ─── Main Retriever ───────────────────────────────────────────────────
+
 export async function retrieveAnswer(input: RetrieveInput): Promise<RetrieveResponse>  {
   try{
-    const { courseId, question, moduleId, videoId } = input;
+    const { courseId, reQuestion, moduleId, videoId } = input;
 
   if (!process.env.GOOGLE_API_KEY) {
     throw new Error("Missing GOOGLE_API_KEY");
@@ -69,7 +78,7 @@ export async function retrieveAnswer(input: RetrieveInput): Promise<RetrieveResp
 
   // 4️⃣ Similarity search
   const results = await vectorStore.similaritySearch(
-    question,
+    reQuestion,
     5,
     courseId
       ? { courseId: { $eq: courseId } }  // ✅ correct format
@@ -95,19 +104,24 @@ export async function retrieveAnswer(input: RetrieveInput): Promise<RetrieveResp
   });
   
 
-  const prompt = `You are an assistant answering questions strictly from the given context.
+  const prompt = `You are a friendly educational assistant helping students learn from course materials.
 
-Context:
-${context}
-
-Question:
-${question}
-
-Rules:
-- If the answer is not present in the context, say:
-  "I don’t know based on the document."
-- Be precise and factual.
-`;
+      Context (extracted from course documents):
+      ${context}
+      
+      Question:
+      ${reQuestion}
+      
+      Rules:
+      - If the question is a greeting (e.g. "hi", "hello", "how are you"), respond warmly and briefly,
+        then invite the student to ask about the course material.
+      - If the question is a general conversational message (e.g. "thanks", "okay", "got it"),
+        respond naturally and briefly.
+      - If the answer IS present in the context, answer precisely and factually from it.
+      - If the answer is NOT present in the context, say:
+        "I don't know based on the uploaded document(s)."
+      - Never make up information beyond what's in the context for course-related questions.
+      `;
 
   const response = await llm.invoke(prompt);
 
@@ -136,3 +150,48 @@ Rules:
      throw error
   }
 }
+
+// ───  Query Rewriter ───────────────────────────────────────────────────
+export async function rewriteQuestion( chatHistory: ChatMessage[], rawQuestion: string ): Promise<string> {
+
+  // If no history, nothing to resolve — return as-is
+  if (chatHistory.length === 0) return rawQuestion;
+
+  const formattedHistory = chatHistory
+    .map((m) => `${m.role === "student" ? "Student" : "Assistant"}: ${m.content}`)
+    .join("\n");
+
+  const rewriterPrompt = `You are a query rewriter for an educational assistant.
+
+     Below is a conversation between a student and an assistant, followed by the student's latest question.
+     Your job is to rewrite the latest question into a SINGLE, fully self-contained question that can be 
+     understood without any prior context.
+     
+     Rules:
+     - Resolve pronouns like "it", "that", "this", "those" using the conversation history
+     - Resolve follow-ups like "explain more", "give another example of that" into explicit questions
+     - If the question is already self-contained, return it unchanged
+     - Return ONLY the rewritten question — no explanation, no preamble
+     
+     Conversation History:
+     ${formattedHistory}
+     
+     Student's Latest Question:
+     ${rawQuestion}
+     
+     Rewritten Question:`;
+
+    // LLM
+    const llm = new ChatGoogleGenerativeAI({
+      model: "gemini-2.5-flash-lite",
+      apiKey: process.env.GOOGLE_API_KEY as string,
+    });
+
+  const response = await llm.invoke(rewriterPrompt);
+  const rewritten = String(response.content).trim();
+
+  console.log(`[QueryRewriter] "${rawQuestion}" → "${rewritten}"`);
+  return rewritten;
+}
+
+

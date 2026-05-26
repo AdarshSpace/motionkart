@@ -15,6 +15,7 @@ export default function BuyButton({  courseId }: { courseId: string }) {
     try {
 
       setLoading(true);
+      console.log("courseId : ", courseId);
 
       const res = await startPayment(courseId);
 
@@ -42,7 +43,7 @@ export default function BuyButton({  courseId }: { courseId: string }) {
       </Button>
 
       <p className="text-center text-xs text-slate-400 font-medium">
-        30-day money-back guarantee
+        15-day money-back guarantee
       </p>
     </div>
   );

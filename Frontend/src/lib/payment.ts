@@ -6,6 +6,7 @@ declare global {
 
   
   export async function startPayment( courseId: string ) {
+    console.log("CourseId : ", courseId);
     // create order from backend
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/payment/create-order`,
@@ -37,7 +38,7 @@ declare global {
       currency: data.order.currency,
       order_id: data.order.id,
   
-      name: "Edu Learn LMS",
+      name: "Motionkart.online",
       description: "Course Purchase",
 
       method: {

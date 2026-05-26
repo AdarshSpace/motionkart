@@ -4,7 +4,6 @@ import { getCourse } from "@/serverAction/learn";
 import { ArrowLeft, Play, CheckCircle2, Users, Star, Globe, ShieldCheck, HelpCircle, Video, FileText, MessageCircle, Lock } from "lucide-react";
 import Link from 'next/link';
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -116,9 +115,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ c
             </h2>
 
             <div className="prose prose-slate max-w-none">
-              <p className="text-slate-600 text-lg leading-relaxed">
-                {details.description}
-              </p>
+              
 
               <p className="text-slate-600 text-lg leading-relaxed">
                 This course is designed to help learners gain practical
@@ -168,12 +165,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ c
                 </p>
               </div>
 
-              <Button
-                variant="link"
-                className="text-[#0039a6] font-bold"
-              >
-                Expand all sections
-              </Button>
+             
             </div>
 
             <Accordion
@@ -318,9 +310,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ c
                    
                 <BuyButton courseId={courseId} />
 
-                  <p className="text-center text-xs text-slate-400 font-medium">
-                    30-day money-back guarantee
-                  </p>
+                 
                 </div>
 
                 <div className="pt-6 border-t border-slate-100">

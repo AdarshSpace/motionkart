@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../../lib/DB.js";
 import { pdfQueue } from "../../lib/queue.js";
-import { title } from "node:process";
+import { mux } from "../../lib/mux.js";
 
 
 
@@ -11,11 +11,13 @@ export const addVideo = async (req: Request, res: Response) => {
     const teacherId = req.user?.id;
     const courseId = req.params.courseId as string;
 
+    console.log(courseId);
+
     const { id: moduleId, title: sectionTitle, videos } = req.body;
 
     const [videoData] = videos;
 
-    const { title: videoTitle, description: videoDescription, videoUrl,  videoPath, videoDuration, notesUrl } = videoData;
+    const { title: videoTitle, description: videoDescription, uploadId,  notesUrl } = videoData;
 
 
     if (!courseId) {
@@ -25,12 +27,37 @@ export const addVideo = async (req: Request, res: Response) => {
         });
     }
 
-    if (!videoTitle && !videoUrl) {
+    if (!videoTitle || !uploadId) {
         return res.status(400).json({
           success: false,
-          message: "Video data is incomplete",
+          message: "Video title and uploadId are required",
         });
     }
+
+    // STEP 1 → Retrieve upload
+    const upload = await mux.video.uploads.retrieve(uploadId);
+
+    if (!upload.asset_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Asset is not ready yet",
+      });
+    }
+
+     // STEP 2 → Retrieve asset
+     const asset = await mux.video.assets.retrieve(upload.asset_id);
+
+    console.log('Asset : ',asset);
+
+     const playbackId = asset.playback_ids?.[0]?.id;
+ 
+     if (!playbackId) {
+       return res.status(400).json({
+         success: false,
+         message: "Playback ID not found",
+       });
+     }
+ 
 
     let finalModuleId = moduleId;
 
@@ -81,21 +108,23 @@ export const addVideo = async (req: Request, res: Response) => {
       data: {
         title: videoTitle,
         description: videoDescription,
-        videoUrl: videoUrl,
-        videoPath: videoPath,
-        duration: videoDuration,
-        notesUrl: notesUrl,
+        muxUploadId: uploadId,
+        muxAssetId: upload.asset_id,
+        muxPlaybackId: playbackId,
+        videoUrl:  `https://stream.mux.com/${playbackId}.m3u8`,
+        duration: Math.floor(asset.duration || 0),
+        notesUrl: notesUrl || null,
 
         moduleId: finalModuleId!,
         position: nextVideoPosition,
       },
     });
 
-    console.log("Created Video : ",createdVideo)
+    console.log("Created Video : ", createdVideo)
 
     if(notesUrl){
-      let ans = await pdfQueue.add("process-pdf", { teacherId, courseId, moduleId, videoId: createdVideo.id, fileUrl: notesUrl,
-       fileName: title});
+      let ans = await pdfQueue.add("process-pdf", { teacherId, courseId, moduleId: finalModuleId, videoId: createdVideo.id, fileUrl: notesUrl,
+       fileName: videoTitle});
 
       console.error("=======================");
       console.log("Ans : ",ans)

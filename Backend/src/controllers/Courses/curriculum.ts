@@ -21,7 +21,7 @@ export const getCurriculum = async (req: Request, res: Response) => {
       },
     });
 
-    console.log('curriculum : ', curriculum?.modules[0])
+    console.log('curriculum : ', curriculum)
 
     if (!curriculum) {
       return res.status(404).json({ success: false, message: "Course not found" });

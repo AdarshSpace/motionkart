@@ -123,7 +123,7 @@ export default function SignupPage() {
             {/* Logo */}
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 rounded-2xl bg-[#0039a6] flex items-center justify-center shadow-lg">
-                <span className="text-white text-2xl font-bold">t</span>
+                <span className="text-white text-2xl font-bold">M</span>
               </div>
             </div>
   

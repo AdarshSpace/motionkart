@@ -7,7 +7,9 @@ import {prisma} from "../../lib/DB.js";
 
 export const webhookHandler = async ( req: Request, res: Response ) => {
     try {
-      const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET!;
+
+      console.log("webhook is working ...")
+      const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET_KEY!;
   
       const signature = req.headers["x-razorpay-signature"] as string;
   
@@ -31,6 +33,8 @@ export const webhookHandler = async ( req: Request, res: Response ) => {
   
       // parse body
       const payload = JSON.parse(body.toString());
+
+      console.log("Payload : ", payload);
   
       const event = payload.event;
   
@@ -42,7 +46,7 @@ export const webhookHandler = async ( req: Request, res: Response ) => {
       // prevent duplicate webhook processing
       const existingWebhook = await prisma.payment.findFirst({
         where: {
-          webhookEventId: payload.account_id,
+          webhookEventId: payload.event + "_" + paymentId,
         },
       });
   
@@ -75,7 +79,7 @@ export const webhookHandler = async ( req: Request, res: Response ) => {
           },
           data: {
             paymentId,
-            webhookEventId: payload.account_id,
+            webhookEventId:  payload.event + "_" + paymentId,
             event,
             status: "SUCCESS",
             paidAt: new Date(),

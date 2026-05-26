@@ -22,42 +22,42 @@ const Body = ({ thumbnail,  handleThumbnailChange, register, errors }: Props) =>
           <div className="space-y-6">
             {/* Title */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+              <label className="mb-2 block text-sm font-semibold text-slate-800">
                 Course Title
               </label>
               <input
                 type="text"
                 {...register("title")}
                 placeholder="Enter course title"
-                className="w-full rounded-2xl border border-purple-200 px-4 py-3 outline-none transition focus:border-purple-600"
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0039a6]"
               />
               {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
             </div>
 
             {/* Description */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+              <label className="mb-2 block text-sm font-semibold text-slate-800">
                 Description
               </label>
               <textarea
                 rows={3}
                 {...register("description")}
                 placeholder="Write course description..."
-                className="w-full rounded-2xl border border-purple-200 px-4 py-3 outline-none transition focus:border-purple-600"
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0039a6]"
               />
               {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
             </div>
 
             {/* Category */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+              <label className="mb-2 block text-sm font-semibold text-slate-800">
                 Category
               </label>
               <input
                 type="text"
                 {...register("category")}
                 placeholder="Web Development"
-                className="w-full rounded-2xl border border-purple-200 px-4 py-3 outline-none transition focus:border-purple-600"
+                className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0039a6]"
               />
               {errors.category && <p className="text-red-500 text-sm">{errors.category.message}</p>}
             </div>
@@ -65,27 +65,27 @@ const Body = ({ thumbnail,  handleThumbnailChange, register, errors }: Props) =>
             {/* Price Row */}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+                <label className="mb-2 block text-sm font-semibold text-slate-800">
                   Price
                 </label>
                 <input
                   type="number"
                   {...register("price")}
                   placeholder="999"
-                  className="w-full rounded-2xl border border-purple-200 px-4 py-3 outline-none transition focus:border-purple-600"
+                  className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0039a6]"
                 />
                 {errors.price && <p className="text-red-500 text-sm">{errors.price.message}</p>}
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+                <label className="mb-2 block text-sm font-semibold text-slate-800">
                   Old Price
                 </label>
                 <input
                   type="number"
                   {...register("oldPrice")}
                   placeholder="1999"
-                  className="w-full rounded-2xl border border-purple-200 px-4 py-3 outline-none transition focus:border-purple-600"
+                  className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0039a6]"
                 />
                 {errors.oldPrice && <p className="text-red-500 text-sm">{errors.oldPrice.message}</p>}
               </div>
@@ -93,14 +93,14 @@ const Body = ({ thumbnail,  handleThumbnailChange, register, errors }: Props) =>
 
             {/* Thumbnail Upload */}
             <div>
-              <label className="mb-2 block text-sm font-semibold text-[#2E1065]">
+              <label className="mb-2 block text-sm font-semibold text-slate-800">
                 Thumbnail
               </label>
 
-              <label className="flex h-52 cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-purple-200 bg-[#F8F5FF] transition hover:bg-purple-50">
-                <UploadCloud className="mb-3 h-8 w-8 text-purple-700" />
+              <label className="flex h-52 cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:bg-slate-100">
+                <UploadCloud className="mb-3 h-8 w-8 text-[#0039a6]" />
 
-                <span className="font-medium text-[#2E1065]">
+                <span className="font-medium text-slate-800">
                   Click to upload
                 </span>
 

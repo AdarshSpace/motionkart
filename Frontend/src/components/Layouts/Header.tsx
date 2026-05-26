@@ -19,8 +19,20 @@ export async function Header() {
           <p className="text-sm font-semibold">{userData.name}</p>
           <p className="text-xs text-muted-foreground">{userData.email}</p>
         </div>
-        <User size={30} strokeWidth={2} className="text-muted-foreground rounded-full bg-gray-200 p-1.5 cursor-auto"/>
-     </div>
+        {userData.image ? (
+      <img
+        src={userData.image}
+        alt={userData.name}
+        className="w-10 h-10 rounded-full object-cover border border-gray-200"
+      />
+    ) : (
+      <User
+        size={30}
+        strokeWidth={2}
+        className="text-muted-foreground rounded-full bg-gray-200 p-1.5"
+      />
+    )}
+        </div>
     </header>
   );
 }

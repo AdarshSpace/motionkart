@@ -7,27 +7,20 @@ import {prisma} from "../../lib/DB.js";
 
 export const verifyPayment = async (req: Request, res: Response) => {
     try {
-        console.log('secret Key : ', process.env.RAZORPAY_SECRET);
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
-      console.log( razorpay_order_id, razorpay_payment_id, razorpay_signature);
   
       // 1. create generated signature
       const body = `${razorpay_order_id}|${razorpay_payment_id}`;
-      console.log(body)
   
       const generatedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_SECRET!)
         .update(body)
         .digest("hex");
 
-        console.log(generatedSignature)
   
       // 2. compare signature
       const isAuthentic =
         generatedSignature === razorpay_signature;
-
-        console.log(isAuthentic)
   
       if (!isAuthentic) {
         return res.status(400).json({
@@ -42,8 +35,6 @@ export const verifyPayment = async (req: Request, res: Response) => {
           orderId: razorpay_order_id,
         },
       });
-
-      console.log(payment);
   
       if (!payment) {
         return res.status(404).json({
@@ -59,7 +50,6 @@ export const verifyPayment = async (req: Request, res: Response) => {
         },
         data: {
           paymentId: razorpay_payment_id,
-          status: "SUCCESS",
           paidAt: new Date(),
         },
       });

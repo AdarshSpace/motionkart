@@ -158,8 +158,11 @@ model Video {
   title       String
   description String?  @db.Text
 
-  videoPath   String?
-  videoUrl    String
+  muxAssetId     String? @unique
+  muxPlaybackId  String?
+  muxUploadId    String?
+
+  videoUrl    String?
   notesUrl    String? 
 
   aiProcessingStatus DocumentStatus   @default(pending)

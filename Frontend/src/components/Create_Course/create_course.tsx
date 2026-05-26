@@ -24,6 +24,7 @@ export type CreateCourseInput = {
 
 export function CreateCourseModal({ open, onClose }: Props) {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, setError, clearErrors, formState: { errors } } = useForm<CreateCourseInput>();
 
   if (!open) return null;
@@ -114,6 +115,7 @@ export function CreateCourseModal({ open, onClose }: Props) {
       return;
     }
 
+    setIsLoading(true);
     try {
           console.log('Thumbnail : ',thumbnail)
       // Ask backend for ImageKit auth
@@ -171,6 +173,8 @@ export function CreateCourseModal({ open, onClose }: Props) {
   }
   catch (err) {
     console.log("Upload failed:", err);
+  } finally {
+    setIsLoading(false);
   }
 }
 
@@ -178,9 +182,9 @@ export function CreateCourseModal({ open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4  backdrop-blur-sm">
       <div className="w-full max-w-2xl h-[75vh] rounded-[28px] bg-white shadow-2xl overflow-y-auto scrollbar-hide p-6">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-purple-100 px-6 py-5">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
           <div>
-            <h2 className="text-2xl font-bold text-[#2E1065]">
+            <h2 className="text-2xl font-bold text-slate-800">
               Create New Course
             </h2>
             <p className="mt-1 text-sm text-gray-500">
@@ -190,9 +194,9 @@ export function CreateCourseModal({ open, onClose }: Props) {
 
           <button
             onClick={onClose}
-            className="rounded-xl p-2 transition hover:bg-purple-50"
+            className="rounded-xl p-2 transition hover:bg-slate-100"
           >
-            <X className="h-5 w-5 text-[#2E1065]" />
+            <X className="h-5 w-5 text-slate-500" />
           </button>
         </div>
 
@@ -200,21 +204,23 @@ export function CreateCourseModal({ open, onClose }: Props) {
         <Body thumbnail={thumbnail}  handleThumbnailChange={handleThumbnailChange} register={register} errors={errors}  />
 
         {/* Footer */}
-        <div className="flex gap-4 border-t border-purple-100 px-6 py-5">
+        <div className="flex gap-4 border-t border-slate-200 px-6 py-5">
 
           <button
           type="button"
             onClick={onClose}
-            className="flex-1 rounded-2xl border border-purple-200 py-3 font-semibold text-[#2E1065] transition hover:bg-purple-50"
+            className="flex-1 rounded-2xl border border-slate-300 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+            disabled={isLoading}
           >
             Cancel
           </button>
 
         <button 
-          className="flex-1 rounded-2xl bg-purple-700 py-3 font-semibold text-white transition hover:bg-purple-800"
+          className="flex-1 rounded-2xl bg-[#0039a6] py-3 font-semibold text-white transition hover:bg-[#002d84] disabled:opacity-50 disabled:cursor-not-allowed"
           type="submit" 
+          disabled={isLoading}
           >
-            Create Course
+            {isLoading ? "Creating..." : "Create Course"}
           </button>
 
           
