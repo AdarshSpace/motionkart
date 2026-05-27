@@ -22,15 +22,23 @@ export const auth = betterAuth({
     emailAndPassword: { 
         enabled: true, 
       },
-      trustedOrigins: [process.env.FRONTEND_URL!, process.env.FRONTEND_URL_WWW!], 
-       user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: true,
-        defaultValue: "STUDENT",
-      },
-    },
+
+
+    trustedOrigins: [
+          process.env.FRONTEND_URL as string,
+        ],
+
+
+
+     user: {
+         additionalFields: {
+             role: {
+                type: "string",
+                required: true,
+                defaultValue: "STUDENT",
+              },
+           },
        },
   
 });
+

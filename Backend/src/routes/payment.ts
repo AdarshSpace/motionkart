@@ -13,6 +13,7 @@ const router = express.Router();
 router.post("/webhook", express.raw({ type: "application/json" }), webhookHandler);
 
 router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
 router.use(authentication);
 
 router.post("/create-order", createOrder);
