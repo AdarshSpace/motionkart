@@ -1,36 +1,38 @@
 import "dotenv/config";
-
-import express from 'express';
 import cors from 'cors';
-
+import express from 'express';
 import { toNodeHandler } from "better-auth/node";
 import { auth } from './lib/auth.js';
-
 import courseRoutes from './routes/courseRoutes.js';
 import videoRoutes from './routes/videoRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import saveVideoRoutes from './routes/saveVideoRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import payment from './routes/payment.js';
-import './worker/PdfWorker.js'; // Start BullMQ PDF worker
+import './worker/PdfWorker.js';
 
-const corsOptions = {
-    origin: [
-      process.env.FRONTEND_URL as string,
-      process.env.FRONTEND_URL_WWW as string,
-      "http://localhost:3001"
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    credentials: true,
-};
-  
+const ALLOWED_ORIGINS = [
+    process.env.FRONTEND_URL as string,
+    process.env.FRONTEND_URL_WWW as string,
+    process.env.VERCEL_FRONTEND_URL as string,
+    "http://localhost:3001"
+];
 
 const app = express();
 
-app.use(cors(corsOptions));
-app.all("/api/auth/{*path}", toNodeHandler(auth));
+app.use(cors({
+    origin: ALLOWED_ORIGINS,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
+
+app.use("/api/auth", toNodeHandler(auth));
 
 app.use('/api/payment', payment);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,17 +42,12 @@ app.use("/api/course", courseRoutes);
 app.use("/api/video", videoRoutes);
 app.use("/api/saveVideo", saveVideoRoutes);
 app.use("/api/chat", chatRoutes);
-
 app.use('/api/user', userRoutes);
-
 
 app.get('/health', (req, res) => {
     console.log('Server is healthy.');
-    res.json({message: 'Server is healthy.'})
+    res.json({ message: 'Server is healthy.' });
 });
-
- 
-
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);

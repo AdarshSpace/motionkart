@@ -25,11 +25,23 @@ export const auth = betterAuth({
 
 
     trustedOrigins: [
-          process.env.FRONTEND_URL_WWW as string,
-          //process.env.FRONTEND_URL as string,
-        ],
+        process.env.FRONTEND_URL_WWW as string,
+        process.env.FRONTEND_URL as string,
+        "http://localhost:3000",  // add if needed for dev
+    ],
 
 
+    advanced: {
+    crossSubDomainCookies: {
+        enabled: true,                    // ✅ was false — this was the bug
+        domain: ".motionkart.online",     // ✅ dot prefix is important
+    },
+    defaultCookieAttributes: {
+        sameSite: "none",
+        secure: true,
+        partitioned: true,                // ✅ add this too
+    }
+},
 
      user: {
          additionalFields: {
@@ -38,8 +50,8 @@ export const auth = betterAuth({
                 required: true,
                 defaultValue: "STUDENT",
               },
-           },
+      
+     },
        },
   
 });
-
