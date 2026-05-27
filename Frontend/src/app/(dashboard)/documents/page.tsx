@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { FileText, ExternalLink, BookOpen, Layers,} from "lucide-react";
 
 import { allDocuments } from "@/serverAction/documents";

@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic";
 import { getCourse } from "@/serverAction/learn";
 
 import { ArrowLeft, Play, CheckCircle2, Users, Star, Globe, ShieldCheck, HelpCircle, Video, FileText, MessageCircle, Lock } from "lucide-react";
@@ -11,7 +11,7 @@ import BuyButton from "@/components/BuyButton/BuyButton";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-export default async function CourseDetailPage({ params }: { params: Promise<{ courseId: string }>}) {
+export default async function CourseDetailPage({ params }: { params:{ courseId: string }}) {
 
   const { courseId } = await params;
 

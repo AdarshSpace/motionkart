@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import LandingPage from "@/components/LandingPage/LandingPage";
 import { cookies } from "next/headers";
 

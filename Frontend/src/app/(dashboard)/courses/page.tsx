@@ -1,4 +1,4 @@
-
+export const dynamic = "force-dynamic";
 import { Card } from "@/components/Card/card";
 import { getAllCourses } from "@/serverAction/allCourses";
 import AddCourseButton from "../../../components/Create_Course/AddCourseButton";
