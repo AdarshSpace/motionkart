@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
+import MuxPlayer from "@mux/mux-player-react";
+
 
 export default function CoursePlayerPage() {
   const { courseId } = useParams();
@@ -187,12 +189,6 @@ export default function CoursePlayerPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // ── Video embed URL ──
-  function generateVideoEmbedUrl(videoPath: string) {
-    if (!videoPath) return "";
-    const imagekitId = process.env.NEXT_PUBLIC_IMAGEKIT_ID;
-    return `https://imagekit.io/player/embed/${imagekitId}/${videoPath}/ik-master.m3u8?controls=true&autoplay=false&tr=sr-240_360_480_720_1080_2160`;
-  }
 
   // ── Shared ReactMarkdown components ──
   const markdownComponents = {
@@ -270,13 +266,16 @@ export default function CoursePlayerPage() {
 
         {/* Video Player */}
         <div className="w-full bg-black relative group shadow-2xl rounded-2xl overflow-hidden mb-10">
-          <div className="aspect-video relative">
-            <iframe
-              className="w-full h-full absolute inset-0"
-              src={activeLesson?.videoPath ? generateVideoEmbedUrl(activeLesson.videoPath) : undefined}
-              title="ImageKit video player"
-              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
+          <div className="aspect-video relative w-full h-full">
+            <MuxPlayer
+              playbackId={activeLesson?.muxPlaybackId}
+              thumbnailTime={21}
+              streamType="on-demand"
+              className="w-full h-full"
+              style={{
+                '--media-primary-color': '#FFFFFF',
+                '--media-accent-color': '#3b82f6',
+              }}
             />
           </div>
         </div>

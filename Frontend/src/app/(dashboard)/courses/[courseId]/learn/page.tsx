@@ -253,7 +253,6 @@ export default function CoursePlayerPage() {
       setSaveLoading(false);
     }
   }
-  console.log("ActiveLesson : ", activeLesson)
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 bg-white animate-in fade-in duration-500 pb-20 p-2 rounded-3xl">

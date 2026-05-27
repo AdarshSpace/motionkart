@@ -6,6 +6,8 @@ import ReactMarkdown from "react-markdown";
 
 import { getChatHistory, sendChat } from "@/serverAction/learn";
 
+import MuxPlayer from "@mux/mux-player-react";
+
 import { Play, CheckCircle, Download, FileText, MessageSquare, Bookmark, Share2, SendHorizontal, Sparkles,
      Bot, User, BookOpen, Loader2, AlertCircle, NavigationIcon,} from "lucide-react";
 
@@ -170,15 +172,7 @@ export default function CoursePlayerClient({ courseId, initialCourseData, initia
     }, 2000);
   }
 
-  // ── Video URL ──
-  function generateVideoEmbedUrl(videoPath: string) {
-    if (!videoPath) return "";
 
-    const imagekitId =
-      process.env.NEXT_PUBLIC_IMAGEKIT_ID;
-
-    return `https://imagekit.io/player/embed/${imagekitId}/${videoPath}/ik-master.m3u8?controls=true&autoplay=false&tr=sr-240_360_480_720_1080_2160`;
-  }
 
   // ── Save state check ──
   useEffect(() => {
@@ -256,17 +250,20 @@ export default function CoursePlayerClient({ courseId, initialCourseData, initia
   return (
     <div>
       {/* VIDEO */}
-      <iframe
-        className="w-full aspect-video rounded-2xl"
-        src={
-          activeLesson?.videoPath
-            ? generateVideoEmbedUrl(
-                activeLesson.videoPath
-              )
-            : undefined
-        }
-        allowFullScreen
-      />
+      <div className="w-full bg-black relative shadow-2xl rounded-2xl overflow-hidden">
+        <div className="aspect-video relative w-full h-full">
+          <MuxPlayer
+            playbackId={activeLesson?.muxPlaybackId}
+            thumbnailTime={21}
+            streamType="on-demand"
+            className="w-full h-full"
+            style={{
+              '--media-primary-color': '#FFFFFF',
+              '--media-accent-color': '#3b82f6',
+            }}
+          />
+        </div>
+      </div>
 
       {/* TITLE */}
       <div className="flex items-center justify-between mt-6">
